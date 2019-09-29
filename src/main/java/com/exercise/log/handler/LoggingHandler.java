@@ -13,6 +13,8 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -57,10 +59,12 @@ public class LoggingHandler {
     }
 
     @SneakyThrows
-    @AfterThrowing(pointcut = "controller() && cudMethods() && inQuotesPackage() && args(..,request)", throwing = "exception")
-    public void logAfterThrowing(JoinPoint joinPoint, AbstractApiException exception, HttpServletRequest request) {
+    @AfterThrowing(pointcut = "controller() && cudMethods() && inQuotesPackage()", throwing = "exception")
+    public void logAfterThrowing(JoinPoint joinPoint, AbstractApiException exception) {
         long id = getId(joinPoint);
 
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
 
         loggingService.save(QuoteLog.builder()
                 .quoteId(id)
@@ -83,8 +87,10 @@ public class LoggingHandler {
     }
 
 
-    @Before(value = "controller() && cudMethods() && inQuotesPackage()  && args(..,request)")
-    public void logBefore(JoinPoint joinPoint, HttpServletRequest request) {
+    @Before(value = "controller() && cudMethods() && inQuotesPackage()")
+    public void logBefore(JoinPoint joinPoint) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
 
         long id = getId(joinPoint);
         loggingService.save(QuoteLog.builder()

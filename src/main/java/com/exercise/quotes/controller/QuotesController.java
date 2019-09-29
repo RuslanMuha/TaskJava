@@ -11,7 +11,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class QuotesController {
     ItemService itemService;
 
     @PostMapping(ADD_QUOTE)
-    QuoteDTO addQuotes(@Valid @RequestBody QuoteDTO quoteDTO, HttpServletRequest request) {
+    QuoteDTO addQuotes(@Valid @RequestBody QuoteDTO quoteDTO) {
         QuoteDTO quote;
         try {
             quote =  quotesService.createQuote(quoteDTO);
@@ -56,13 +55,13 @@ public class QuotesController {
 
 
     @DeleteMapping(DELETE_QUOTE)
-    void deleteQuote(@PathVariable long id, HttpServletRequest request) {
+    void deleteQuote(@PathVariable long id) {
         quotesService.deleteQuote(id);
     }
 
 
     @PutMapping(UPDATE_QUOTE)
-    QuoteDTO updateQuote(@Valid @PathVariable long id, @RequestBody QuoteDTO quoteDTO, HttpServletRequest request) {
+    QuoteDTO updateQuote(@Valid @PathVariable long id, @RequestBody QuoteDTO quoteDTO) {
 
         QuoteDTO quote;
         try {
@@ -75,18 +74,18 @@ public class QuotesController {
     }
 
     @PostMapping(ADD_ITEM)
-    public ItemDTO createItem(@PathVariable long idQuote, @RequestBody ItemDTO itemdto, HttpServletRequest request) {
+    public ItemDTO createItem(@PathVariable long idQuote, @RequestBody ItemDTO itemdto) {
         return itemService.createItem(idQuote, itemdto);
     }
 
 
     @PutMapping(UPDATE_ITEM)
-    public ItemDTO updateItem(@RequestBody ItemDTO itemDto, HttpServletRequest request) {
+    public ItemDTO updateItem(@RequestBody ItemDTO itemDto) {
         return itemService.updateItem(itemDto);
     }
 
     @DeleteMapping(DELETE_ITEM)
-    public void deleteItem(@PathVariable long id, HttpServletRequest request) {
+    public void deleteItem(@PathVariable long id) {
         itemService.deleteItem(id);
     }
 
