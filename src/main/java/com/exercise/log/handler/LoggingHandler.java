@@ -63,8 +63,11 @@ public class LoggingHandler {
     public void logAfterThrowing(JoinPoint joinPoint, AbstractApiException exception) {
         long id = getId(joinPoint);
 
+
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                 .getRequest();
+
+
 
         loggingService.save(QuoteLog.builder()
                 .quoteId(id)

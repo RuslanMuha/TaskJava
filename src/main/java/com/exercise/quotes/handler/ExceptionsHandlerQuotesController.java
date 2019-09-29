@@ -21,7 +21,7 @@ public class ExceptionsHandlerQuotesController extends ResponseEntityExceptionHa
 
 
     @ExceptionHandler(AbstractApiException.class)
-    public  ResponseEntity<Object> handleQuoteAlreadyExistException(AbstractApiException ex) {
+    public  ResponseEntity<Object> handleAbstractApiException(AbstractApiException ex) {
         ErrorResponse response = ErrorResponse.builder()
                 .description(ex.getMessage())
                 .errorCode(ex.getErrorCode())

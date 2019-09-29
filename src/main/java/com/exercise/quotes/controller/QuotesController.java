@@ -40,8 +40,6 @@ public class QuotesController {
     }
 
 
-
-
     @GetMapping(GET_ALL_QUOTES)
     List<QuoteDTO> getQuotes() {
         return quotesService.getAllQuotes();
