@@ -10,32 +10,31 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @ManagedResource
 public class AccountingCheckMongo implements IAccounting {
     @Value("${period:30}")
-    int experationPeriod;
+    private int expirationPeriod;
 
     @ManagedAttribute
-    public int getExperationPeriod() {
-        return experationPeriod;
+    public int getExpirationPeriod() {
+        return expirationPeriod;
     }
 
     @ManagedAttribute
-    public void setExperationPeriod(int experationPeriod) {
-        this.experationPeriod = experationPeriod;
+    public void setExpirationPeriod(int experationPeriod) {
+        this.expirationPeriod = experationPeriod;
     }
 
     @Autowired
-    AccMngRepository accounts;
+    private AccMngRepository accounts;
 
     @Override
     public String getPassword(String username) {
         AccountMongo account = accounts.findById(username).orElse(null);
         if (account == null)
             return "";
-        LocalDate expDate = account.getDate().plusDays(experationPeriod);
+        LocalDate expDate = account.getDate().plusDays(expirationPeriod);
         if (LocalDate.now().isAfter(expDate) || LocalDate.now().equals(expDate))
             return "";
         return account.getPassword();

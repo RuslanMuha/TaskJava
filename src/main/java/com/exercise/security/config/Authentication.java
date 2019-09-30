@@ -13,17 +13,19 @@ import static com.exercise.security.accounting.ErrorAccountMessage.USER_NOT_FOUN
 
 @Configuration
 public class Authentication implements UserDetailsService {
-@Autowired
-IAccounting accounts;
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		String password=accounts.getPassword(username);
-		if(password.isEmpty()){
-			throw new UsernameNotFoundException(USER_NOT_FOUND);
 
-		}
-		return new User(username, password,
-				AuthorityUtils.createAuthorityList(accounts.getRoles(username)));
-	}
+    @Autowired
+    private IAccounting accounts;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        String password = accounts.getPassword(username);
+        if (password.isEmpty()) {
+            throw new UsernameNotFoundException(USER_NOT_FOUND);
+
+        }
+        return new User(username, password,
+                AuthorityUtils.createAuthorityList(accounts.getRoles(username)));
+    }
 
 }

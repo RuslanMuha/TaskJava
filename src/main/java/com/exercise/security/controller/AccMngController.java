@@ -14,7 +14,7 @@ import static com.exercise.security.ApiAccountConstant.UPDATE_PASSWORD;
 @RestController
 public class AccMngController {
     @Autowired
-    IAccManagement accounts;
+    private IAccManagement accounts;
 
     @PostMapping(ACCOUNT)
     boolean addAccount(@RequestBody AccountDto account) {
