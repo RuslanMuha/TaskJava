@@ -12,6 +12,5 @@ public interface UserRepository extends JpaRepository<UserCustom,Long> {
 
     Optional<UserCustom> findByUsername(String email);
 
-    @Transactional
     void deleteByUsername(String email);
 }

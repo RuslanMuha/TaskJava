@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +26,7 @@ import static com.exercise.security.ErrorMessageUsersConstant.*;
 public class UserServiceImpl implements UserService {
 
     @Value("${token.expires:60}")
-    private  long EXPIRES_MINUTE;
+    private long EXPIRES_MINUTE;
 
 
     private AuthenticationManager authenticationManager;
@@ -55,6 +56,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Transactional
     @Override
     public void signup(UserCustom user) {
         if (!userRepository.existsByUsername(user.getUsername())) {
@@ -69,11 +71,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional
+    @Override
     public void deleteUser(String email) {
         userRepository.deleteByUsername(email);
     }
 
-
+    @Override
     public String refreshToken(String email) {
         UserCustom user = userRepository.findByUsername(email).orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND));
         return tokenHandler.generateAccessToken(email, user.getAuthorities(), LocalDateTime.now().plusHours(EXPIRES_MINUTE));
