@@ -8,8 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingServiceImpl implements LoggingService {
 
+
+    private LoggingRepository loggingRepository;
+
     @Autowired
-    LoggingRepository loggingRepository;
+    public LoggingServiceImpl(LoggingRepository loggingRepository) {
+        this.loggingRepository = loggingRepository;
+    }
 
     @Override
     public void save(QuoteLog log) {
