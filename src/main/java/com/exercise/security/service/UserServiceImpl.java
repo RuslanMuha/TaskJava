@@ -7,6 +7,7 @@ import com.exercise.security.entity.UserCustom;
 import com.exercise.security.exceptions.AuthenticationCustomException;
 import com.exercise.security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,21 +24,22 @@ import static com.exercise.security.ErrorMessageUsersConstant.*;
 @Service
 public class UserServiceImpl implements UserService {
 
+    @Value("${token.expires:60}")
+    private  long EXPIRES_MINUTE;
 
 
-
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
+    private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private TokenHandler tokenHandler;
 
+    @Autowired
+    public UserServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder passwordEncoder, TokenHandler tokenHandler) {
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenHandler = tokenHandler;
+    }
 
     @Override
     public String signin(UserCustom user) {
@@ -45,7 +47,7 @@ public class UserServiceImpl implements UserService {
         try {
             List<Role> authorities = userRepository.findByUsername(user.getUsername()).get().getAuthorities();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-            return tokenHandler.generateAccessToken(user.getUsername(), authorities, LocalDateTime.now().plusHours(1));
+            return tokenHandler.generateAccessToken(user.getUsername(), authorities, LocalDateTime.now().plusMinutes(EXPIRES_MINUTE));
         } catch (Exception e) {
             throw new AuthenticationCustomException(HttpStatus.UNAUTHORIZED.value(), INVALID_USERNAME_OR_PASSWORD);
         }
@@ -74,6 +76,6 @@ public class UserServiceImpl implements UserService {
 
     public String refreshToken(String email) {
         UserCustom user = userRepository.findByUsername(email).orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND));
-        return tokenHandler.generateAccessToken(email, user.getAuthorities(), LocalDateTime.now().plusHours(1));
+        return tokenHandler.generateAccessToken(email, user.getAuthorities(), LocalDateTime.now().plusHours(EXPIRES_MINUTE));
     }
 }
